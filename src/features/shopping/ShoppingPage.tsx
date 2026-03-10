@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
-import type { ShoppingItem, Ingredient } from "../../domain/types";
-import { 
-  getPlannedMealsForDateRange,
-  getMealById,
-  getShoppingManualItems,
-  addShoppingItem,
-  deleteShoppingItem,
-  saveShoppingManualItems
-} from "../../storage/dataService";
+import type { ShoppingItem } from "../../domain/types";
+import { getPlannedMealsForDateRange } from "../planner/api";
+import { getMealsForUser } from "../meals/api";
 import { v4 as uuidv4 } from "../../storage/uuid";
 import "./ShoppingPage.css";
 
@@ -17,6 +11,7 @@ export default function ShoppingPage() {
   const [aggregatedItems, setAggregatedItems] = useState<ShoppingItem[]>([]);
   const [manualItems, setManualItems] = useState<ShoppingItem[]>([]);
   const [newItemName, setNewItemName] = useState("");
+  const [listLoading, setListLoading] = useState(false);
 
   useEffect(() => {
     // Set default to this week
@@ -27,89 +22,83 @@ export default function ShoppingPage() {
     
     setStartDate(formatDate(monday));
     setEndDate(formatDate(sunday));
-    
-    loadManualItems();
   }, []);
 
   useEffect(() => {
     if (startDate && endDate) {
       generateShoppingList();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
-  const loadManualItems = () => {
-    setManualItems(getShoppingManualItems());
-  };
+  const generateShoppingList = async () => {
+    setListLoading(true);
+    try {
+      const [plannedMeals, allMeals] = await Promise.all([
+        getPlannedMealsForDateRange(startDate, endDate),
+        getMealsForUser(),
+      ]);
 
-  const generateShoppingList = () => {
-    const plannedMeals = getPlannedMealsForDateRange(startDate, endDate);
-    const allIngredients: Ingredient[] = [];
+      const mealMap = new Map(allMeals.map(m => [m.id, m]));
+      const aggregated = new Map<string, ShoppingItem>();
 
-    // Collect all ingredients from planned meals
-    plannedMeals.forEach(pm => {
-      const meal = getMealById(pm.mealId);
-      if (meal) {
-        allIngredients.push(...meal.ingredients);
-      }
-    });
+      plannedMeals.forEach(pm => {
+        const meal = mealMap.get(pm.mealId);
+        if (meal) {
+          meal.ingredients.forEach(ing => {
+            const key = ing.name.toLowerCase();
+            if (aggregated.has(key)) {
+              const existing = aggregated.get(key)!;
+              const newQuantity = existing.quantity
+                ? `${existing.quantity}, ${ing.quantity || ""}`.trim()
+                : ing.quantity || "";
+              aggregated.set(key, {
+                ...existing,
+                quantity: newQuantity.endsWith(",") ? newQuantity.slice(0, -1) : newQuantity,
+              });
+            } else {
+              aggregated.set(key, {
+                id: uuidv4(),
+                name: ing.name,
+                quantity: ing.quantity,
+                store: ing.store || "Coles",
+                checked: false,
+                manual: false,
+              });
+            }
+          });
+        }
+      });
 
-    // Aggregate ingredients by name (case-insensitive)
-    const aggregated = new Map<string, ShoppingItem>();
-    
-    allIngredients.forEach(ing => {
-      const key = ing.name.toLowerCase();
-      if (aggregated.has(key)) {
-        const existing = aggregated.get(key)!;
-        // Combine quantities (simple string concat for MVP)
-        const newQuantity = existing.quantity 
-          ? `${existing.quantity}, ${ing.quantity || ""}`.trim()
-          : ing.quantity || "";
-        aggregated.set(key, {
-          ...existing,
-          quantity: newQuantity.endsWith(",") ? newQuantity.slice(0, -1) : newQuantity
-        });
-      } else {
-        aggregated.set(key, {
-          id: uuidv4(),
-          name: ing.name,
-          quantity: ing.quantity,
-          store: ing.store || "Coles",
-          checked: false,
-          manual: false
-        });
-      }
-    });
-
-    setAggregatedItems(Array.from(aggregated.values()));
+      setAggregatedItems(Array.from(aggregated.values()));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setListLoading(false);
+    }
   };
 
   const handleAddManualItem = () => {
     if (!newItemName.trim()) return;
-
     const newItem: ShoppingItem = {
       id: uuidv4(),
       name: newItemName,
       store: "Coles",
       checked: false,
-      manual: true
+      manual: true,
     };
-
-    addShoppingItem(newItem);
+    setManualItems(prev => [...prev, newItem]);
     setNewItemName("");
-    loadManualItems();
   };
 
   const handleDeleteManualItem = (id: string) => {
-    deleteShoppingItem(id);
-    loadManualItems();
+    setManualItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const handleToggleCheck = (item: ShoppingItem) => {
-    const updated = manualItems.map(i => 
-      i.id === item.id ? { ...i, checked: !i.checked } : i
+  const handleToggleCheck = (id: string) => {
+    setManualItems(prev =>
+      prev.map(i => i.id === id ? { ...i, checked: !i.checked } : i)
     );
-    saveShoppingManualItems(updated);
-    setManualItems(updated);
   };
 
   const allItems = [...aggregatedItems, ...manualItems];
@@ -152,7 +141,9 @@ export default function ShoppingPage() {
             )}
           </div>
 
-          {allItems.length === 0 ? (
+          {listLoading ? (
+            <p className="empty-message">Loading items…</p>
+          ) : allItems.length === 0 ? (
             <p className="empty-message">
               No items in shopping list. Plan some meals or add manual items.
             </p>
@@ -167,7 +158,7 @@ export default function ShoppingPage() {
                     <input
                       type="checkbox"
                       checked={item.checked}
-                      onChange={() => handleToggleCheck(item)}
+                      onChange={() => handleToggleCheck(item.id)}
                     />
                   )}
                   <div className="item-content">

@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
 import type { PlannedMeal, Meal, MealTime } from "../../domain/types";
-import { getPlannedMeals, getMeals, addPlannedMeal, deletePlannedMeal } from "../../storage/dataService";
-import { v4 as uuidv4 } from "../../storage/uuid";
+import { getPlannedMeals, createPlannedMeal, deletePlannedMeal } from "../planner/api";
+import { getMealsForUser } from "../meals/api";
+import { useAuth } from "../../context/AuthProvider";
 import "./PlanPage.css";
 
 const MEAL_TIMES: MealTime[] = ["breakfast", "lunch", "dinner", "snack"];
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export default function PlanPage() {
+  const { user } = useAuth();
   const [plannedMeals, setPlannedMeals] = useState<PlannedMeal[]>([]);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getMonday(new Date()));
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalDate, setModalDate] = useState("");
   const [modalTime, setModalTime] = useState<MealTime>("breakfast");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setPlannedMeals(getPlannedMeals());
-    setMeals(getMeals());
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [pm, m] = await Promise.all([getPlannedMeals(), getMealsForUser()]);
+      setPlannedMeals(pm);
+      setMeals(m);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getWeekDates = () => {
@@ -49,22 +58,31 @@ export default function PlanPage() {
     setShowAddModal(true);
   };
 
-  const handleSaveModal = (mealId: string) => {
-    const plannedMeal: PlannedMeal = {
-      id: uuidv4(),
-      date: modalDate,
-      time: modalTime,
-      mealId,
-    };
-    addPlannedMeal(plannedMeal);
-    loadData();
+  const handleSaveModal = async (mealId: string) => {
+    if (!user) return;
+    try {
+      await createPlannedMeal({
+        date: modalDate,
+        time: modalTime,
+        mealId,
+        userId: user.id,
+      });
+      await loadData();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add meal to plan. Please try again.");
+    }
     setShowAddModal(false);
   };
 
-  const handleRemoveMeal = (id: string) => {
-    if (confirm("Remove this meal from the plan?")) {
-      deletePlannedMeal(id);
-      loadData();
+  const handleRemoveMeal = async (id: string) => {
+    if (!confirm("Remove this meal from the plan?")) return;
+    try {
+      await deletePlannedMeal(id);
+      await loadData();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to remove meal. Please try again.");
     }
   };
 
@@ -85,6 +103,8 @@ export default function PlanPage() {
   };
 
   const weekDates = getWeekDates();
+
+  if (loading) return <div className="plan-page"><p style={{ padding: '2rem' }}>Loading plan…</p></div>;
 
   return (
     <div className="plan-page">

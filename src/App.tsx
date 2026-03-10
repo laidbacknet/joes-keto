@@ -1,30 +1,36 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import Layout from './app/Layout'
 import Dashboard from './features/Dashboard'
 import MealsPage from './features/meals/MealsPage'
 import PlanPage from './features/plan/PlanPage'
 import WorkoutsPage from './features/workouts/WorkoutsPage'
 import ShoppingPage from './features/shopping/ShoppingPage'
+import StarterMealsPage from './features/onboarding/StarterMealsPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { AuthProvider, useAuth } from './context/AuthProvider'
-import { initializeStorage } from './storage/dataService'
 import './App.css'
 
 function ProtectedRoute() {
-  const { session, loading } = useAuth()
-  if (loading) return <div className="auth-loading">Loading…</div>
+  const { session, loading, profile, profileLoading } = useAuth()
+  const location = useLocation()
+
+  if (loading || profileLoading) return <div className="auth-loading">Loading…</div>
   if (!session) return <Navigate to="/login" replace />
+
+  // Redirect new / un-onboarded users to the starter-meals selection screen
+  if (
+    profile !== null &&
+    !profile.has_completed_onboarding &&
+    location.pathname !== '/onboarding'
+  ) {
+    return <Navigate to="/onboarding" replace />
+  }
+
   return <Outlet />
 }
 
 function App() {
-  useEffect(() => {
-    // Initialize storage with seed data on first run
-    initializeStorage();
-  }, []);
-
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -32,6 +38,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route element={<ProtectedRoute />}>
+            <Route path="/onboarding" element={<StarterMealsPage />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
