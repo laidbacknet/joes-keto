@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react";
 import type { Meal } from "../../domain/types";
-import { getMeals, addMeal, updateMeal, deleteMeal } from "../../storage/dataService";
+import { getMealsForUser, createMeal, updateMeal, deleteMeal } from "./api";
+import { useAuth } from "../../context/AuthProvider";
 import { v4 as uuidv4 } from "../../storage/uuid";
 import "./MealsPage.css";
 
 export default function MealsPage() {
+  const { user } = useAuth();
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadMeals();
   }, []);
 
-  const loadMeals = () => {
-    setMeals(getMeals());
+  const loadMeals = async () => {
+    setLoading(true);
+    try {
+      setMeals(await getMealsForUser());
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddNew = () => {
@@ -34,22 +43,30 @@ export default function MealsPage() {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedMeal || !selectedMeal.name.trim()) {
       alert("Please enter a meal name");
       return;
     }
+    if (!user) return;
 
-    const existingMeal = meals.find(m => m.id === selectedMeal.id);
-    if (existingMeal) {
-      updateMeal(selectedMeal);
-    } else {
-      addMeal(selectedMeal);
+    setSaving(true);
+    try {
+      const existingMeal = meals.find(m => m.id === selectedMeal.id);
+      if (existingMeal) {
+        await updateMeal(selectedMeal);
+      } else {
+        await createMeal({ ...selectedMeal, userId: user.id });
+      }
+      await loadMeals();
+      setIsEditing(false);
+      setSelectedMeal(null);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save meal. Please try again.");
+    } finally {
+      setSaving(false);
     }
-
-    loadMeals();
-    setIsEditing(false);
-    setSelectedMeal(null);
   };
 
   const handleCancel = () => {
@@ -57,14 +74,18 @@ export default function MealsPage() {
     setSelectedMeal(null);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this meal?")) {
-      deleteMeal(id);
-      loadMeals();
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this meal?")) return;
+    try {
+      await deleteMeal(id);
+      await loadMeals();
       if (selectedMeal?.id === id) {
         setSelectedMeal(null);
         setIsEditing(false);
       }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete meal. Please try again.");
     }
   };
 
@@ -84,7 +105,9 @@ export default function MealsPage() {
 
       <div className="meals-layout">
         <div className="meals-list">
-          {meals.length === 0 ? (
+          {loading ? (
+            <p className="empty-message">Loading meals…</p>
+          ) : meals.length === 0 ? (
             <p className="empty-message">No meals yet. Add your first meal!</p>
           ) : (
             meals.map(meal => (
@@ -121,6 +144,7 @@ export default function MealsPage() {
               onChange={setSelectedMeal}
               onSave={handleSave}
               onCancel={handleCancel}
+              saving={saving}
             />
           ) : (
             <MealView 
@@ -140,9 +164,10 @@ interface MealFormProps {
   onChange: (meal: Meal) => void;
   onSave: () => void;
   onCancel: () => void;
+  saving?: boolean;
 }
 
-function MealForm({ meal, onChange, onSave, onCancel }: MealFormProps) {
+function MealForm({ meal, onChange, onSave, onCancel, saving }: MealFormProps) {
   const handleAddIngredient = () => {
     onChange({
       ...meal,
@@ -283,7 +308,9 @@ function MealForm({ meal, onChange, onSave, onCancel }: MealFormProps) {
       </div>
 
       <div className="form-actions">
-        <button className="btn btn-primary" onClick={onSave}>Save</button>
+        <button className="btn btn-primary" onClick={onSave} disabled={saving}>
+          {saving ? 'Saving…' : 'Save'}
+        </button>
         <button className="btn" onClick={onCancel}>Cancel</button>
       </div>
     </div>

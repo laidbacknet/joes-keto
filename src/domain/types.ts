@@ -16,6 +16,20 @@ export interface Meal {
   instructions: string[];
   prepTimeMins?: number;
   cookTimeMins?: number;
+  /** Set when the meal was imported from a starter meal template */
+  sourceStarterMealId?: string;
+}
+
+export interface StarterMeal {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  tags: string[];
+  prepTimeMins?: number;
+  cookTimeMins?: number;
+  instructions: string[];
+  ingredients: Ingredient[];
 }
 
 export type MealTime = "breakfast" | "lunch" | "dinner" | "snack";
