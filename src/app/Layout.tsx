@@ -41,6 +41,7 @@ export default function Layout() {
           <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : ""} onClick={closeMenu}>Dashboard</Link>
           <Link to="/meals" className={location.pathname === "/meals" ? "active" : ""} onClick={closeMenu}>Meals</Link>
           <Link to="/plan" className={location.pathname === "/plan" ? "active" : ""} onClick={closeMenu}>Weekly Plan</Link>
+          <Link to="/training" className={location.pathname === "/training" ? "active" : ""} onClick={closeMenu}>Training</Link>
           <Link to="/workouts" className={location.pathname === "/workouts" ? "active" : ""} onClick={closeMenu}>Workouts</Link>
           <Link to="/shopping" className={location.pathname === "/shopping" ? "active" : ""} onClick={closeMenu}>Shopping</Link>
           {profile?.role === 'admin' && (
