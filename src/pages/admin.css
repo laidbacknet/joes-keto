@@ -1,0 +1,295 @@
+.admin-page {
+  padding: 0;
+}
+
+.admin-header {
+  margin-bottom: 1.5rem;
+}
+
+.admin-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+}
+
+.admin-header p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ── Tabs ── */
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tab {
+  background: transparent;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  border-radius: 4px 4px 0 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.admin-tab:hover {
+  color: #2c3e50;
+}
+
+.admin-tab.active {
+  color: #2c3e50;
+  border-bottom-color: #2c3e50;
+}
+
+/* ── Filter bar ── */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-filter-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.admin-filter-btn {
+  background: #f4f6f7;
+  border: 1px solid #ddd;
+  color: #555;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.admin-filter-btn:hover {
+  border-color: #2c3e50;
+  color: #2c3e50;
+}
+
+.admin-filter-btn.active {
+  background: #2c3e50;
+  border-color: #2c3e50;
+  color: white;
+}
+
+.admin-badge {
+  background: #e74c3c;
+  color: white;
+  border-radius: 10px;
+  padding: 0 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.admin-filter-btn.active .admin-badge {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Table ── */
+.admin-table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.admin-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: #fafafa;
+}
+
+/* ── Badges ── */
+.admin-role-badge,
+.admin-status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.role-admin {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.role-user {
+  background: #eaf0fb;
+  color: #2980b9;
+}
+
+.status-approved {
+  background: #eafaf1;
+  color: #1e8449;
+}
+
+.status-pending {
+  background: #fef9e7;
+  color: #b7770d;
+}
+
+.admin-self-label {
+  font-size: 0.8rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* ── Approval action buttons ── */
+.approval-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.approval-error {
+  font-size: 0.8rem;
+  color: #c0392b;
+}
+
+.admin-btn {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn-approve {
+  background: #27ae60;
+  color: white;
+}
+
+.admin-btn-approve:hover:not(:disabled) {
+  background: #1e8449;
+}
+
+.admin-btn-suspend {
+  background: #e67e22;
+  color: white;
+}
+
+.admin-btn-suspend:hover:not(:disabled) {
+  background: #ca6f1e;
+}
+
+.admin-btn-promote {
+  background: #8e44ad;
+  color: white;
+}
+
+.admin-btn-promote:hover:not(:disabled) {
+  background: #76349a;
+}
+
+.admin-btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+/* ── Empty / loading states ── */
+.admin-loading,
+.admin-empty {
+  color: #888;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+}
+
+/* ── Meals / Recipes section ── */
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-section-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+/* ── Summary cards ── */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-stat-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.admin-stat-card .stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.admin-stat-card .stat-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
