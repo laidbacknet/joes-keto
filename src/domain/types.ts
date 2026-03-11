@@ -73,3 +73,43 @@ export interface ShoppingItem {
   checked?: boolean;
   manual?: boolean; // true if manually added, false if from meal plan
 }
+
+export interface ProgramContent {
+  daily_structure?: {
+    morning?: string;
+    lunch?: string;
+    dinner?: string;
+    protein_target?: string;
+  };
+  weekly_structure?: {
+    fast_days?: number;
+    standard_days?: number;
+    description?: string;
+  };
+  walking?: {
+    frequency?: string;
+    duration?: string;
+  };
+  strength_training?: {
+    days?: number;
+    schedule?: string[];
+    exercises?: string[];
+  };
+}
+
+export interface Program {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  content?: ProgramContent;
+  createdAt: string;
+}
+
+export interface UserProgram {
+  id: string;
+  userId: string;
+  programId: string;
+  program?: Program;
+  createdAt: string;
+}

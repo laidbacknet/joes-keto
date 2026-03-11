@@ -6,6 +6,7 @@ import PlanPage from './features/plan/PlanPage'
 import WorkoutsPage from './features/workouts/WorkoutsPage'
 import ShoppingPage from './features/shopping/ShoppingPage'
 import StarterMealsPage from './features/onboarding/StarterMealsPage'
+import ProgramPage from './features/programs/ProgramPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import MagicLinkLogin from './pages/MagicLinkLogin'
@@ -60,6 +61,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="meals" element={<MealsPage />} />
               <Route path="plan" element={<PlanPage />} />
+              <Route path="training" element={<ProgramPage />} />
               <Route path="workouts" element={<WorkoutsPage />} />
               <Route path="shopping" element={<ShoppingPage />} />
             </Route>
