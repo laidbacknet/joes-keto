@@ -1,0 +1,263 @@
+.store-products-page {
+  max-width: 100%;
+}
+
+.sp-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ─── Sidebar ──────────────────────────────────────────────────────────────── */
+
+.sp-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-search {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.sp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+.sp-card {
+  background: white;
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.sp-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.13);
+  transform: translateY(-1px);
+}
+
+.sp-card.selected {
+  border-left-color: #3498db;
+}
+
+.sp-card-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.sp-card-meta {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.15rem;
+}
+
+.sp-card-store {
+  font-size: 0.75rem;
+  color: #3498db;
+  font-weight: 600;
+}
+
+/* ─── Detail panel ─────────────────────────────────────────────────────────── */
+
+.sp-detail {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  min-height: 400px;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #999;
+  font-style: italic;
+}
+
+.empty-message {
+  color: #999;
+  font-style: italic;
+}
+
+/* ─── Form ─────────────────────────────────────────────────────────────────── */
+
+.sp-form h2 {
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+/* ─── View ─────────────────────────────────────────────────────────────────── */
+
+.sp-view h2 {
+  margin-top: 0;
+}
+
+.sp-image-wrap {
+  margin: 1rem 0 1.5rem;
+}
+
+.sp-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  object-fit: contain;
+  border: 1px solid #eee;
+}
+
+.sp-detail-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.sp-detail-table th,
+.sp-detail-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+
+.sp-detail-table th {
+  width: 120px;
+  font-weight: 600;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.sp-detail-table td {
+  color: #2c3e50;
+}
+
+.sp-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sp-link:hover {
+  text-decoration: underline;
+}
+
+/* ─── Shared buttons ────────────────────────────────────────────────────────── */
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #ecf0f1;
+  color: #2c3e50;
+  min-height: 44px;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .sp-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sp-list {
+    max-height: none;
+  }
+
+  .sp-detail {
+    min-height: auto;
+    padding: 1.25rem;
+  }
+
+  .empty-state {
+    height: 150px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+}
