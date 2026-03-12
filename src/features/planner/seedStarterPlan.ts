@@ -97,10 +97,10 @@ const WEEKLY_SCHEDULE: DaySchedule[] = [
 
 function getMondayOfCurrentWeek(date: Date): Date {
   const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  const day = d.getDay(); // 0 = Sunday, 1 = Monday, …
-  // Shift back to Monday; setDate handles negative values and month boundaries correctly
-  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  d.setUTCHours(0, 0, 0, 0);
+  const day = d.getUTCDay(); // 0 = Sunday, 1 = Monday, …
+  // Shift back to Monday; setUTCDate handles negative values and month boundaries correctly
+  d.setUTCDate(d.getUTCDate() - (day === 0 ? 6 : day - 1));
   return d;
 }
 
@@ -159,7 +159,7 @@ export async function seedStarterPlan(userId: string): Promise<void> {
   const rows = Array.from({ length: WEEKS_TO_SEED }, (_, week) =>
     WEEKLY_SCHEDULE.flatMap((schedule, dayIndex) => {
       const date = new Date(monday);
-      date.setDate(date.getDate() + week * 7 + dayIndex);
+      date.setUTCDate(date.getUTCDate() + week * 7 + dayIndex);
       const dateStr = formatDate(date);
 
       return [
