@@ -1,6 +1,14 @@
 begin;
 
 -- ─────────────────────────────────────────────────────────────────────────────
+-- Drop legacy tables (the init_schema created a different meal_plans schema
+-- referencing profiles; meal_entries depends on it via FK).
+-- CASCADE removes all dependent triggers, policies, and indexes automatically.
+-- ─────────────────────────────────────────────────────────────────────────────
+drop table if exists public.meal_entries cascade;
+drop table if exists public.meal_plans cascade;
+
+-- ─────────────────────────────────────────────────────────────────────────────
 -- meal_plans  (user-owned weekly plan container)
 -- ─────────────────────────────────────────────────────────────────────────────
 create table public.meal_plans (
@@ -58,6 +66,20 @@ create policy "meal_plans_update_own"
 create policy "meal_plans_delete_own"
   on public.meal_plans for delete to authenticated
   using (auth.uid() = user_id);
+
+-- Re-create admin override policies (originally on the legacy table, dropped with it)
+create policy "meal_plans_admin_select_all"
+  on public.meal_plans for select to authenticated
+  using (public.is_admin());
+
+create policy "meal_plans_admin_update_all"
+  on public.meal_plans for update to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+create policy "meal_plans_admin_delete_all"
+  on public.meal_plans for delete to authenticated
+  using (public.is_admin());
 
 -- meal_plan_items: access through parent meal_plan ownership
 alter table public.meal_plan_items enable row level security;
