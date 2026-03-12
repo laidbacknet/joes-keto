@@ -152,4 +152,22 @@ export interface InventoryTransaction {
   sourceId?: string;
   occurredAt: string;
   createdAt: string;
+export interface ShoppingTripItem {
+  id: string;
+  shoppingTripId: string;
+  productName: string;
+  quantityPurchased: number;
+  packQuantity?: number;
+  packUnit?: string;
+  createdAt: string;
+}
+
+export interface ShoppingTrip {
+  id: string;
+  userId: string;
+  store: string;
+  purchasedAt: string; // ISO timestamptz
+  notes?: string;
+  createdAt: string;
+  items: ShoppingTripItem[];
 }
