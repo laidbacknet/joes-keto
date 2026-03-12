@@ -90,6 +90,30 @@ export interface PlannedWorkout {
   notes?: string;
 }
 
+export type MealSlot = "breakfast" | "lunch" | "dinner" | "snack";
+
+export interface MealPlanItem {
+  id: string;
+  mealPlanId: string;
+  mealId: string;
+  dayOfWeek: number; // 0 = Monday … 6 = Sunday
+  mealSlot: MealSlot;
+  servings: number;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface MealPlan {
+  id: string;
+  userId: string;
+  name: string;
+  weekStart?: string; // YYYY-MM-DD
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  items: MealPlanItem[];
+}
+
 export interface ShoppingItem {
   id: string;
   name: string;

@@ -3,6 +3,7 @@ import Layout from './app/Layout'
 import Dashboard from './features/Dashboard'
 import MealsPage from './features/meals/MealsPage'
 import PlanPage from './features/plan/PlanPage'
+import MealPlansPage from './features/meal-plans/MealPlansPage'
 import WorkoutsPage from './features/workouts/WorkoutsPage'
 import ShoppingPage from './features/shopping/ShoppingPage'
 import StarterMealsPage from './features/onboarding/StarterMealsPage'
@@ -65,6 +66,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="meals" element={<MealsPage />} />
               <Route path="plan" element={<PlanPage />} />
+              <Route path="meal-plans" element={<MealPlansPage />} />
               <Route path="training" element={<ProgramPage />} />
               <Route path="workouts" element={<WorkoutsPage />} />
               <Route path="shopping" element={<ShoppingPage />} />
