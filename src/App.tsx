@@ -7,6 +7,7 @@ import WorkoutsPage from './features/workouts/WorkoutsPage'
 import ShoppingPage from './features/shopping/ShoppingPage'
 import StarterMealsPage from './features/onboarding/StarterMealsPage'
 import ProgramPage from './features/programs/ProgramPage'
+import StoreProductsPage from './features/store-products/StoreProductsPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import MagicLinkLogin from './pages/MagicLinkLogin'
@@ -53,6 +54,9 @@ function App() {
           <Route path="/magic-link" element={<MagicLinkLogin />} />
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="store-products" element={<StoreProductsPage />} />
+            </Route>
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/onboarding" element={<StarterMealsPage />} />

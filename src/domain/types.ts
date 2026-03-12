@@ -1,5 +1,16 @@
 // Domain types for Joe's Keto
 
+export interface StoreProduct {
+  id: string;
+  name: string;
+  brand?: string;
+  sizeLabel?: string;
+  store: string;
+  productUrl: string;
+  imageUrl?: string;
+  createdAt: string;
+}
+
 export interface MealIngredientProduct {
   id: string;
   name: string;
